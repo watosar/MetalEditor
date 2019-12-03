@@ -1,7 +1,5 @@
-
 import ctypes
 from objc_util import *
-from . import renderer
 
 
 load_framework('MetalKit')
@@ -17,15 +15,13 @@ def mtl_create_system_default_device():
 def create_mtk_view(x, y, w, h):
     view = MTKView.alloc().initWithFrame_device_((CGRect(CGPoint(x, y), CGSize(w, h))), mtl_create_system_default_device())
     return view
+    
 
 def ViewController_viewDidLoad(_self, _cmd):
-    # never be called
     print('did load')
     self = ObjCInstance(_self)
     self.view = view = create_mtk_view(0, 0, 414, 414)
     view.preferredFramesPerSecond = 60
-    py_renderer = renderer.init(view)
-    view.delegate = py_renderer
     
 
 UIViewController = ObjCClass('UIViewController')
@@ -34,6 +30,11 @@ ViewController = create_objc_class(
     superclass = UIViewController,
     methods=[
         ViewController_viewDidLoad,
-        #ViewController_viewWillAppear_
     ]
 )
+
+def init(frame=(0, 0, 414, 414)):
+    cvc = ViewController.new()
+    cvc.view().frame = CGRect(CGPoint(*frame[:2]), CGSize(*frame[2:4]))
+    return cvc
+

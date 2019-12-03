@@ -16,22 +16,16 @@ command_queue = None
 viewport_size = [1080.0,1080.0]
 
 def get_shader_source(sh_path = Path(__file__).parent/'shader.metal.js'):
+    sh_path = Path(sh_path)
     return sh_path.read_text('utf-8')
-    
-s_time = None
-def get_time():
-    global s_time
-    if not s_time: 
-        s_time = time.time()
-    return time.time()-s_time
     
 
 def PyRenderer_mtkView_drawableSizeWillChange_(_self, _cmd, _view, _size):
     '''
-    I cannot get _size arg as CGSize struct
+    I cannot find the way to get _size arg as CGSize struct
     '''
     global viewport_size
-    print('size change')
+    #print('size change')
     #size = ...
     #viewport_size[:] = size.height, size.width
 PyRenderer_mtkView_drawableSizeWillChange_.argtypes = [c_void_p, CGSize]
@@ -92,13 +86,12 @@ PyRenderer = create_objc_class(
 )
 
 
-def init(view):
-    print('init')
-    global pipeline_state, command_queue, s_time
+def init(view, sh_path):
+    global pipeline_state, command_queue
     device = view.device()
     _error  = c_void_p()
     
-    default_library = device.newLibraryWithSource_options_error_(get_shader_source(), MTLCompileOptions.new(), _error)
+    default_library = device.newLibraryWithSource_options_error_(get_shader_source(sh_path), MTLCompileOptions.new(), _error)
     
     if _error.value:
         error = ObjCInstance(_error)
@@ -137,10 +130,8 @@ def init(view):
     
     renderer = PyRenderer.new()
     renderer.py_shader_config = {
-        'vertex': {'count': 3, 'PrimitiveType': 4}
-        'flagment': {'args': []}
+        'vertex': {'count': 3, 'PrimitiveType': 4},
+        'flagment': {'args': [((lambda *,s_time=time.time():time.time() - s_time) , c_float)]}
     }
-    
-    print('init end')
     return renderer
 

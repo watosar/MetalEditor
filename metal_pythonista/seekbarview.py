@@ -3,7 +3,7 @@ import time
 
 
 class SeekBarView(ui.View):
-    def __init__(self, *args, frame=(0, 0, 414, 34*2), **kwargs):
+    def __init__(self, *args, frame=(0, 0, 414, 68), **kwargs):
         super().__init__(name='SeekVarView', frame=frame)
         
         self.theme_color = (0.0392156862745098, 0.5176470588235295, 1.0, 1.0)
@@ -70,8 +70,10 @@ class SeekBarView(ui.View):
         
         
 if __name__ == '__main__':
-    sbv = SeekBarView()
-    sbv.present()
+    wrap = ui.View()
+    sbv = SeekBarView(frame=(0, 0, 414, 68))
+    wrap.add_subview(sbv)
+    wrap.present()
     while sbv.on_screen:
         sbv.get_playing_time()
         time.sleep(0.2)
