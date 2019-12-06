@@ -4,7 +4,7 @@ import ctypes
 from . import viewcontroller
 from . import renderer
 
-class MtlViewer(ui.View):
+class MtlView(ui.View):
     def __init__(self, *args, frame, **kwargs):
         super().__init__(*args, frame=frame, **kwargs)
         objc_cvc = viewcontroller.init(frame)
