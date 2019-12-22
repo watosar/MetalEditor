@@ -11,5 +11,5 @@ This script prepares Pythonista for the handier coding of metal shaders.
 - For syntax highlighting, I recommend naming shader files as `~~.js`.
 - This script often crashes when you run it for the first time.
 - The reload button is lazy. Please push him some times.
-- *Don’t change the tab*, the app certainly freeze.
+- **Don’t change the tab**, the app certainly freeze.
 
