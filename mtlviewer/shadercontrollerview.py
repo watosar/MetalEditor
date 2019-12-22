@@ -19,15 +19,26 @@ class ShaderControllerView(ui.View):
         self.seekbar_view.width = 414-40
         self.add_subview(self.seekbar_view)
         
-        if debug: return
         self.reload_button.action = self.reload_action
+        
         self.shaderview = shaderview
         self.shaderpath = shaderpath
         self.reload_action()
     
+    def will_draw(self):
+        return 
+        
+    def _on_draw(self) -> float:
+        self.will_draw()
+        return self.seekbar_view.get_playing_time()
+    
+    def will_reload(self):
+        return 
+        
     def reload_action(self, *_):
-        self.shaderview.load_shader(self.shaderpath)
-        self.shaderview.py_shader_config['flagment']['args'][0] = (self.seekbar_view.get_playing_time, ctypes.c_float)
+        self.will_reload()
+        if self.shaderview.load_shader(self.shaderpath):
+            self.shaderview.py_shader_config['flagment']['args'][0] = (self._on_draw, ctypes.c_float)
     
     def appear_action(self, *_):
         if not self.y < 0:

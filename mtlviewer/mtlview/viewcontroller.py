@@ -18,10 +18,10 @@ def create_mtk_view(x, y, w, h):
     
 
 def ViewController_viewDidLoad(_self, _cmd):
-    print('did load')
+    #print('did load')
     self = ObjCInstance(_self)
     self.view = view = create_mtk_view(0, 0, 414, 414)
-    view.preferredFramesPerSecond = 60
+    view.preferredFramesPerSecond = 1
     
 
 UIViewController = ObjCClass('UIViewController')

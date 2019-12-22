@@ -13,60 +13,60 @@ MTLCompileOptions, MTLRenderPipelineDescriptor, MTLRenderPipelineReflection = ma
 
 pipeline_state = None
 command_queue = None
-viewport_size = [1080.0,1080.0]
+viewport_size = [0.0,0.0]
+py_shader_config = {}
 
 def get_shader_source(sh_path = Path(__file__).parent/'shader.metal.js'):
     sh_path = Path(sh_path)
+    print(sh_path)
     return sh_path.read_text('utf-8')
     
 
-def PyRenderer_mtkView_drawableSizeWillChange_(_self, _cmd, _view, _size):
-    '''
-    I cannot find the way to get _size arg as CGSize struct
-    '''
+def PyRenderer_mtkView_drawableSizeWillChange_(_self, _cmd, view_p, size):
     global viewport_size
-    #print('size change')
-    #size = ...
-    #viewport_size[:] = size.height, size.width
-PyRenderer_mtkView_drawableSizeWillChange_.argtypes = [c_void_p, CGSize]
+    #print('size change', size)
+    viewport_size[:] = size.height, size.width
+    #print(viewport_size)
+PyRenderer_mtkView_drawableSizeWillChange_.encoding = 'v:@:{CGSize}'
+# special thanks for JonB 
+# https://forum.omz-software.com/topic/4968/how-can-i-use-return-in-my-objc-class/2
 
 
-
-def PyRenderer_drawInMTKView_(_self, _cmd, _view):
+def PyRenderer_drawInMTKView_(_self, _cmd, view_p):
     self = ObjCInstance(_self)
-    view = ObjCInstance(_view)
+    view = ObjCInstance(view_p)
     #view.setClearColor_((1.0,0.0,0.0,1.0))
     command_buffer = command_queue.commandBuffer()
     command_buffer.label = 'MyCommand'
     
     renderpass_descriptor = view.currentRenderPassDescriptor()
     
-    if renderpass_descriptor != None:
-        
+    if renderpass_descriptor != None:       
         render_encoder = command_buffer.renderCommandEncoderWithDescriptor_(renderpass_descriptor)
-        
         render_encoder.label = "MyRenderEncoder"
-    
-        view_port = (0.0, 0.0, viewport_size[0], viewport_size[1], 0.0, 1.0)
-        #render_encoder.setViewport_(view_port) 
-        # TODO : research this func is needed or not
+        view_port = (0.0, 0.0, *viewport_size, 0.0, 1.0)
+        render_encoder.setViewport_(view_port) 
+        # TODO : research whether this func is needed
         
         render_encoder.setRenderPipelineState_(pipeline_state)
-        
-        for index, (arg, c_type) in enumerate(self.py_shader_config['flagment']['args']):
-            if callable(arg): arg = arg()
-            arg = c_type(arg)
-            render_encoder.setFragmentBytes_length_atIndex_(
-                byref(arg),
-                sizeof(arg),
-                index
+        #print(py_shader_config)
+        flagment_config = py_shader_config.get('flagment')
+        if flagment_config:
+            for index, (arg, c_type) in enumerate(flagment_config['args']):
+                if callable(arg): arg = arg()
+                arg = c_type(arg)
+                render_encoder.setFragmentBytes_length_atIndex_(
+                    byref(arg),
+                    sizeof(arg),
+                    index
+                )
+        vertex_config = py_shader_config.get('vertex')
+        if vertex_config:
+            render_encoder.drawPrimitives_vertexStart_vertexCount_(
+                vertex_config['PrimitiveType'], #MTLPrimitiveTypeTriangle,
+                0, 
+                vertex_config['count'],
             )
-        
-        render_encoder.drawPrimitives_vertexStart_vertexCount_(
-            self.py_shader_config['vertex']['PrimitiveType'], #MTLPrimitiveTypeTriangle,
-            0, 
-            self.py_shader_config['vertex']['count'],
-        )
         
         render_encoder.endEncoding()
         command_buffer.presentDrawable_(view.currentDrawable())
@@ -87,7 +87,7 @@ PyRenderer = create_objc_class(
 
 
 def init(view, sh_path):
-    global pipeline_state, command_queue
+    global pipeline_state, command_queue, py_shader_config
     device = view.device()
     _error  = c_void_p()
     
@@ -95,7 +95,7 @@ def init(view, sh_path):
     
     if _error.value:
         error = ObjCInstance(_error)
-        print(error)
+        sys.stderr.write(str(error)+'\n')
         return 
     
     vertex_function = default_library.newFunctionWithName_("vertexShader")
@@ -118,20 +118,20 @@ def init(view, sh_path):
     )
     
     if not pipeline_state:
-        print(pipeline_state_descriptor_p)
-        print("Failed to created pipeline state,",)
+        #print(pipeline_state_descriptor_p)
+        #print("Failed to created pipeline state,")
         error = ObjCInstance(_error)
-        print(error)
+        sys.stderr.write(str(error))
         return 
         
     reflection = ObjCInstance(_reflection)
-    print(pipeline_state, reflection) 
+    #print(pipeline_state, reflection) 
     command_queue = device.newCommandQueue()
     
     renderer = PyRenderer.new()
-    renderer.py_shader_config = {
+    py_shader_config = {
         'vertex': {'count': 3, 'PrimitiveType': 4},
         'flagment': {'args': [((lambda *,s_time=time.time():time.time() - s_time) , c_float)]}
     }
-    return renderer
+    return renderer, py_shader_config
 

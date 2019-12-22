@@ -13,11 +13,16 @@ class MtlView(ui.View):
         objc_self.addSubview_(self.objc_mtkview)
         objc_cvc.didMoveToParentViewController_(objc_self)
     
-    @on_main_thread
+    #@on_main_thread
     def load_shader(self, sh_path):
-        self.objc_mtkview.delegate = renderer.init(self.objc_mtkview, sh_path)
-        self.py_shader_config = self.objc_mtkview.delegate().py_shader_config
-        
+        #print('load', sh_path)
+        resp = renderer.init(self.objc_mtkview, sh_path)
+        if not resp:
+            return 
+        self.objc_mtkview.delegate, self.py_shader_config = resp
+        return True
+            
     def will_close(self):
         print('----close----')
+        
 
