@@ -1,8 +1,6 @@
 # coding: utf-8
 #import logger
 from objc_util import *
-import ui
-import sys
 
 
 UIApplication = ObjCClass('UIApplication')

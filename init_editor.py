@@ -2,8 +2,7 @@ import setupui
 from getfilepath import get_filepath
 import mtlviewer.initialize
 import pathlib
-import io
-import time
+
 
 root = setupui.setup()
 if not root:
