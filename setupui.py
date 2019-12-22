@@ -1,5 +1,5 @@
 # coding: utf-8
-import logger
+#import logger
 from objc_util import *
 import ui
 import sys
