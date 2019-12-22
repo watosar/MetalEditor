@@ -67,15 +67,4 @@ class SeekBarView(ui.View):
             self.seek_slider.value = seek_value
             self.update_time_presence()
         return self.playing_time
-        
-        
-if __name__ == '__main__':
-    wrap = ui.View()
-    sbv = SeekBarView(frame=(0, 0, 414, 68))
-    sbv.width = 300
-    wrap.add_subview(sbv)
-    wrap.present()
-    while sbv.on_screen:
-        sbv.get_playing_time()
-        time.sleep(0.2)
 

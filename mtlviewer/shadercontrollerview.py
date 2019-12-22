@@ -49,10 +49,4 @@ class ShaderControllerView(ui.View):
             self.y = 0
             self.height = 68
             self.appear_button.image = ui.Image('iob:chevron_down_256')
-        
-if __name__ == '__main__':
-    wrap = ui.View()
-    scv = ShaderControllerView(shaderview=0, shaderpath=0, debug=True)
-    wrap.add_subview(scv)
-    wrap.present()
 
