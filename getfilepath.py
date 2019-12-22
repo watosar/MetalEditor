@@ -15,10 +15,9 @@ def get_subview(view, description):
         target = get_subview(v, description)
         if target: return target
 
-tevd = get_subview(root_view, 'OMText''EditorView').delegate()
-
-def find_filepath():
-    return tevd.filePath()
+def get_filepath():
+    tevd = get_subview(root_view, 'OMText''EditorView').delegate()
+    return str(tevd.filePath())
     
 if __name__ == '__main__':
-    print(find_filepath())
+    print(get_filepath())
