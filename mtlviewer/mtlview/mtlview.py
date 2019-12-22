@@ -24,5 +24,4 @@ class MtlView(ui.View):
             
     def will_close(self):
         print('----close----')
-        
 
