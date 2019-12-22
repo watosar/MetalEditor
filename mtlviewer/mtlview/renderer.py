@@ -18,7 +18,7 @@ py_shader_config = {}
 
 def get_shader_source(sh_path = Path(__file__).parent/'shader.metal.js'):
     sh_path = Path(sh_path)
-    print(sh_path)
+    #print(sh_path)
     return sh_path.read_text('utf-8')
     
 
