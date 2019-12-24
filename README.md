@@ -13,6 +13,3 @@ This script prepares Pythonista for the handier coding of metal shaders.
 - The reload button is lazy. Please push him some times.
 - **Don’t change the tab**, the app certainly freeze.
 
-## Future
-- controll configs(FPS, VertexCount and VertexType) from somewhere.
-
