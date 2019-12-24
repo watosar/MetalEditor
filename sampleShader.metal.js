@@ -1,3 +1,15 @@
+/*
+# set some configs
+[Editor]
+    timer_limit = 20
+    fps = 30
+
+[Vertex]
+    count = 3
+    type = 4
+*/
+
+
 #include <metal_stdlib>
 #include <simd/simd.h>
 
@@ -37,7 +49,7 @@ fragment float4 fragmentShader(
     constant float &time [[buffer(0)]]
 ){
     
-    in.color.x += sin(time);
+    in.color.z += sin(time);
     return in.color;
     
 }

@@ -34,11 +34,18 @@ class ShaderControllerView(ui.View):
     
     def will_reload(self):
         return 
+    
+    def did_reload(self):
+        return 
+    
+    def _did_reload(self):
+        self.did_reload()
+        self.shaderview.py_shader_config['flagment']['args'][0] = (self._on_draw, ctypes.c_float)
         
     def reload_action(self, *_):
         self.will_reload()
         if self.shaderview.load_shader(self.shaderpath):
-            self.shaderview.py_shader_config['flagment']['args'][0] = (self._on_draw, ctypes.c_float)
+            self._did_reload()
     
     def appear_action(self, *_):
         if not self.y < 0:

@@ -45,7 +45,7 @@ class SeekBarView(ui.View):
         self.loop_button.tint_color = ((.3,.3,.3,1), self.theme_color)[self.is_loop]
         
     def update_time_presence(self):
-        self.time_label.text = f'{str(self.playing_time)[:4]:<04}/10.0'
+        self.time_label.text = f'{str(self.playing_time)[:4]:<04}/{self.limit}'
         
     def seek_action(self, *args):
         if self.is_playing: self.toggle_playing()
@@ -67,4 +67,9 @@ class SeekBarView(ui.View):
             self.seek_slider.value = seek_value
             self.update_time_presence()
         return self.playing_time
+    
+    def update_limit(self, limit):
+        self.seek_slider.value = self.playing_time / limit
+        self.limit = limit
+        self.update_time_presence()
 

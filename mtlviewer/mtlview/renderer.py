@@ -14,7 +14,20 @@ MTLCompileOptions, MTLRenderPipelineDescriptor, MTLRenderPipelineReflection = ma
 pipeline_state = None
 command_queue = None
 viewport_size = [0.0,0.0]
-py_shader_config = {}
+py_shader_config = py_shader_config = {
+    'vertex': {
+        'count': 3,
+        'PrimitiveType': 4 # MTLPrimitiveTypeTriangle
+    },
+    'flagment': {
+        'args': [
+            (
+                (lambda *,s_time=time.time():time.time()-s_time),
+                c_float
+            ),
+        ],
+    }
+}
 
 def get_shader_source(sh_path = Path(__file__).parent/'shader.metal.js'):
     sh_path = Path(sh_path)
@@ -60,10 +73,11 @@ def PyRenderer_drawInMTKView_(_self, _cmd, view_p):
                     sizeof(arg),
                     index
                 )
+        
         vertex_config = py_shader_config.get('vertex')
         if vertex_config:
             render_encoder.drawPrimitives_vertexStart_vertexCount_(
-                vertex_config['PrimitiveType'], #MTLPrimitiveTypeTriangle,
+                vertex_config['PrimitiveType'],
                 0, 
                 vertex_config['count'],
             )
@@ -129,9 +143,5 @@ def init(view, sh_path):
     command_queue = device.newCommandQueue()
     
     renderer = PyRenderer.new()
-    py_shader_config = {
-        'vertex': {'count': 3, 'PrimitiveType': 4},
-        'flagment': {'args': [((lambda *,s_time=time.time():time.time() - s_time) , c_float)]}
-    }
     return renderer, py_shader_config
 
