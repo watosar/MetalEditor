@@ -9,12 +9,14 @@ load_framework('Metal')
 
 MTLCompileOptions, MTLRenderPipelineDescriptor, MTLRenderPipelineReflection = map(ObjCClass,('MTLCompileOptions','MTLRenderPipelineDescriptor', 'MTLRenderPipelineReflection'))
 
-
+c_float_a2 = c_float * 2
 
 pipeline_state = None
 command_queue = None
 viewport_size = [0.0,0.0]
-py_shader_config = py_shader_config = {
+resolution = c_float_a2(0 ,0)
+
+py_shader_config = {
     'vertex': {
         'count': 3,
         'PrimitiveType': 4 # MTLPrimitiveTypeTriangle
@@ -22,6 +24,12 @@ py_shader_config = py_shader_config = {
     'flagment': {
         'args': [
             (
+                # resolution
+                resolution,
+                None
+            ),
+            (
+                # time
                 (lambda *,s_time=time.time():time.time()-s_time),
                 c_float
             ),
@@ -38,7 +46,7 @@ def get_shader_source(sh_path = Path(__file__).parent/'shader.metal.js'):
 def PyRenderer_mtkView_drawableSizeWillChange_(_self, _cmd, view_p, size):
     global viewport_size
     #print('size change', size)
-    viewport_size[:] = size.height, size.width
+    viewport_size[:] = resolution[:] = size.height, size.width
     #print(viewport_size)
 PyRenderer_mtkView_drawableSizeWillChange_.encoding = 'v:@:{CGSize}'
 # special thanks for JonB 
@@ -66,8 +74,10 @@ def PyRenderer_drawInMTKView_(_self, _cmd, view_p):
         flagment_config = py_shader_config.get('flagment')
         if flagment_config:
             for index, (arg, c_type) in enumerate(flagment_config['args']):
-                if callable(arg): arg = arg()
-                arg = c_type(arg)
+                if callable(arg): 
+                    arg = arg()
+                if c_type: 
+                    arg = c_type(arg)
                 render_encoder.setFragmentBytes_length_atIndex_(
                     byref(arg),
                     sizeof(arg),
@@ -101,7 +111,7 @@ PyRenderer = create_objc_class(
 
 
 def init(view, sh_path):
-    global pipeline_state, command_queue, py_shader_config
+    global pipeline_state, command_queue
     device = view.device()
     _error  = c_void_p()
     

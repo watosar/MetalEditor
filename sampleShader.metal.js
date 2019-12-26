@@ -1,7 +1,7 @@
 /*
 # set some configs
 [Editor]
-    timer_limit = 20
+    timer_limit = 10
     fps = 30
 
 [Vertex]
@@ -46,7 +46,8 @@ vertex RasterizerData vertexShader(
 
 fragment float4 fragmentShader(
     RasterizerData in [[stage_in]],
-    constant float &time [[buffer(0)]]
+    constant float2 &resolution [[buffer(0)]],
+    constant float &time [[buffer(1)]]
 ){
     
     in.color.z += sin(time);
