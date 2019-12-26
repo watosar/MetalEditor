@@ -71,6 +71,7 @@ def will_reload():
     tevd.saveData()
     
 def did_reload():
+    #print('reload')
     set_config()
 
 controller_view.will_reload = will_reload
@@ -83,3 +84,4 @@ controller_view.objc_instance.setTag_(-5)
 
 #set FPS
 mtl_view.objc_mtkview.preferredFramesPerSecond = 30
+did_reload()

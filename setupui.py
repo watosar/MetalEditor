@@ -74,7 +74,7 @@ def setup():
     text_editor_view = root_view.viewWithTag_(-1) or get_subview(root_view, description='OMTextEditor''View')
     text_editor_view.setTag_(-1)
     text_editor_view.tintColor = UIDeviceRGBColor.clearColor()
-    text_editor_view.backgroundColor = UIDeviceRGBColor.colorWithRed_green_blue_alpha_(0.176471, 0.176471, 0.176471, 0.4)
+    text_editor_view.backgroundColor = UIDeviceRGBColor.colorWithRed_green_blue_alpha_(0.176471, 0.176471, 0.176471, 0.16)
     text_editor_view.alpha = 0.8
     text_editor_view_parent = text_editor_view.superview()
     

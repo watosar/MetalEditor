@@ -16,7 +16,8 @@ class ShaderControllerView(ui.View):
         self.add_subview(self.appear_button)
         
         self.seekbar_view = seekbarview.SeekBarView(flex='RB')
-        self.seekbar_view.width = 414-40
+        self.seekbar_view.width = 414-45
+        self.seekbar_view.x = 13
         self.add_subview(self.seekbar_view)
         
         self.reload_button.action = self.reload_action
@@ -40,7 +41,7 @@ class ShaderControllerView(ui.View):
     
     def _did_reload(self):
         self.did_reload()
-        self.shaderview.py_shader_config['flagment']['args'][0] = (self._on_draw, ctypes.c_float)
+        self.shaderview.py_shader_config['flagment']['args'][1] = (self._on_draw, ctypes.c_float)
         
     def reload_action(self, *_):
         self.will_reload()
