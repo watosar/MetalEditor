@@ -22,6 +22,8 @@ tevd = tev.delegate()
 def get_text():
     return str(tev.textView().text())
 
+mtlviewer.mtlview.renderer.get_shader_source = lambda *_: get_text()
+
 pattern = re.compile('/[*](.*?)[*]/', flags=re.S)
 def get_config():
     match = pattern.match(get_text())
