@@ -4,6 +4,7 @@ from objc_util import *
 
 
 UIApplication = ObjCClass('UIApplication')
+NSMutableAttributedString = ObjCClass('NSMutableAttributedString')
 UIDeviceRGBColor = ObjCClass('UIDeviceRGBColor')
 root_view=UIApplication.sharedApplication().keyWindow().rootViewController().view()
 
@@ -35,7 +36,8 @@ def get_filename():
 
 
 def make_mainView():
-    myView = UIView.alloc().initWithFrame_(CGRect(CGPoint(32, 0), CGSize(382, 382)))
+    width = root_view.frame().size.width
+    myView = UIView.alloc().initWithFrame_(CGRect(CGPoint(32, 0), CGSize(width-32, width-32)))
     myView.setAutoresizingMask_(18) #WH
     myView.setTag_(-2)
     myView.backgroundColor = UIColor.colorWithRed_green_blue_alpha_(0.4, 1, 0.4, 1)
@@ -53,7 +55,11 @@ myEditingDelegate = create_objc_class(
     classmethods=[],
     protocols = ['UITextViewDelegate']
 )
-    
+
+def get_theme_bg_color(tev, alpha=1.0):
+    col=tev.syntaxHighlighter().theme().backgroundColor()
+    rgb = [float(i) for i in str(col.stringFromColor())[1:-2].split(', ')][:-1]
+    return UIDeviceRGBColor.colorWithRed_green_blue_alpha_(*rgb, alpha)
 
 def setup():
     my_view = root_view.viewWithTag_(-2)
@@ -62,8 +68,7 @@ def setup():
         root_view.frameOrigine = CGPoint(0, 0)
         my_view.removeFromSuperview()
         tev = root_view.viewWithTag_(-1)
-        tev.tintgroundColor = UIDeviceRGBColor.colorWithRed_green_blue_alpha_(0.176471, 0.176471, 0.176471, 1)
-        tev.backgroundColor = UIDeviceRGBColor.colorWithRed_green_blue_alpha_(0.176471, 0.176471, 0.176471, 1)
+        tev.backgroundColor = get_theme_bg_color(tev)
         tev.alpha = 1
         return
     
@@ -74,8 +79,8 @@ def setup():
     text_editor_view = root_view.viewWithTag_(-1) or get_subview(root_view, description='OMTextEditor''View')
     text_editor_view.setTag_(-1)
     text_editor_view.tintColor = UIDeviceRGBColor.clearColor()
-    text_editor_view.backgroundColor = UIDeviceRGBColor.colorWithRed_green_blue_alpha_(0.176471, 0.176471, 0.176471, 0.16)
-    text_editor_view.alpha = 0.8
+    text_editor_view.backgroundColor = get_theme_bg_color(text_editor_view, 0.3)
+    text_editor_view.alpha = 1
     text_editor_view_parent = text_editor_view.superview()
     
     
@@ -85,10 +90,18 @@ def setup():
     #main.addSubview_(mtl_viewer)
     text_editor_view_parent.addSubview_(main)
     text_editor_view_parent.sendSubviewToBack_(main)
-    return root_view 
+    return root_view
 
 
 if __name__ == '__main__':
-    setup()
+    res = setup()
+    tev = root_view.viewWithTag_(-1)
+    import edit_theme
+    if res:
+        alpha = 'cc'
+    else:
+        alpha = '00'
+    #edit_theme.set_text_background(tev, '000000'+alpha)
     pass
+
 
