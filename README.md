@@ -1,5 +1,6 @@
 ## Overview
-This script prepares Pythonista for the handier coding of metal shaders.
+This script prepares Pythonista for the handier coding of metal shaders.  
+<img src="https://raw.githubusercontent.com/watosar/MetalEditor/images/1CE28F69-5F01-43C4-8F33-6AA880E2E345.jpeg" width="320px">
 
 ## Usage
 1. add `init_editor.py` to shortcut.
