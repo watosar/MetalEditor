@@ -1,2 +1,0 @@
-from .mtlview import MtlView
-
