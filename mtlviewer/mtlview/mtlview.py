@@ -16,6 +16,7 @@ class MtlView(ui.View):
     #@on_main_thread
     def load_shader(self, sh_path):
         #print('load', sh_path)
+        self.name = sh_path.name
         resp = renderer.init(self.objc_mtkview, sh_path)
         if not resp:
             return 

@@ -1,7 +1,7 @@
 # coding: utf-8
 #import logger
 from objc_util import *
-
+import sys
 
 UIApplication = ObjCClass('UIApplication')
 NSMutableAttributedString = ObjCClass('NSMutableAttributedString')
@@ -49,13 +49,16 @@ def get_theme_bg_color(tev, alpha=1.0):
     rgb = [float(i) for i in str(col.stringFromColor())[1:-2].split(', ')][:-1]
     return UIDeviceRGBColor.colorWithRed_green_blue_alpha_(*rgb, alpha)
 
+@on_main_thread
 def setup():
     my_view = root_view.viewWithTag_(-2)
     
     if my_view:
-        root_view.frameOrigine = CGPoint(0, 0)
-        my_view.removeFromSuperview()
         tev = root_view.viewWithTag_(-1)
+        if not tev:
+            sys.stderr.write('cannot start more editor\n')
+            return
+        my_view.removeFromSuperview()
         bg_color = get_theme_bg_color(tev)
         tev.backgroundColor = bg_color
         tev.superview().backgroundColor = bg_color
