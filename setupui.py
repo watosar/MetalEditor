@@ -43,18 +43,6 @@ def make_mainView():
     myView.backgroundColor = UIColor.colorWithRed_green_blue_alpha_(0.4, 1, 0.4, 1)
     return myView
     
-def myEditingDelegate_textViewDidBeginEditing_(_self, _cmd, _):
-    print('hi')
-        
-myEditingDelegate = create_objc_class( 
-    'myEditingDelegate',
-    superclass = NSObject,
-    methods=[
-        myEditingDelegate_textViewDidBeginEditing_,
-    ],
-    classmethods=[],
-    protocols = ['UITextViewDelegate']
-)
 
 def get_theme_bg_color(tev, alpha=1.0):
     col=tev.syntaxHighlighter().theme().backgroundColor()
@@ -68,7 +56,9 @@ def setup():
         root_view.frameOrigine = CGPoint(0, 0)
         my_view.removeFromSuperview()
         tev = root_view.viewWithTag_(-1)
-        tev.backgroundColor = get_theme_bg_color(tev)
+        bg_color = get_theme_bg_color(tev)
+        tev.backgroundColor = bg_color
+        tev.superview().backgroundColor = bg_color
         tev.alpha = 1
         return
     
@@ -78,21 +68,20 @@ def setup():
     
     text_editor_view = root_view.viewWithTag_(-1) or get_subview(root_view, description='OMTextEditor''View')
     text_editor_view.setTag_(-1)
-    text_editor_view.tintColor = UIDeviceRGBColor.clearColor()
-    text_editor_view.backgroundColor = get_theme_bg_color(text_editor_view, 0.3)
+    #text_editor_view.tintColor = UIDeviceRGBColor.clearColor()
+    
+    text_editor_view.backgroundColor = get_theme_bg_color(text_editor_view, 0.2)
     text_editor_view.alpha = 1
-    text_editor_view_parent = text_editor_view.superview()
-    
-    
-    text_editor_view._viewDelegate = myEditingDelegate.new()
-    
+    text_editor_view_s = text_editor_view.superview()
+    text_editor_view_s.backgroundColor = UIColor.clearColor()
+    text_editor_view_s_s = text_editor_view_s.superview()
     main = make_mainView()
     #main.addSubview_(mtl_viewer)
-    text_editor_view_parent.addSubview_(main)
-    text_editor_view_parent.sendSubviewToBack_(main)
+    text_editor_view_s_s.addSubview_(main)
+    text_editor_view_s_s.sendSubviewToBack_(main)
     return root_view
 
-
+#exit()
 if __name__ == '__main__':
     res = setup()
     tev = root_view.viewWithTag_(-1)
