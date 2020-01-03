@@ -107,4 +107,8 @@ root = res
 if __name__ == '__main__':
     editor = MetalEditor(root)
     editor.start()
-
+    import save_image
+    def save():
+        save_image.clear_cache()
+        save_image.save(editor.mtl_view.objc_mtkview)
+        
