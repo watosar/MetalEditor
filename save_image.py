@@ -2,6 +2,9 @@ from ctypes import *
 import objc_util
 from objc_util import *
 import logger
+import sys
+
+sys.setrecursionlimit(2<<12)
 
 load_framework('Metal')
 
@@ -63,7 +66,7 @@ objc_util.type_encodings['{MTLRegion}'] = MTLRegion
 objc_util.type_encodings['{MTLTextureSwizzleChannels}'] = MTLTextureSwizzleChannels
 
 
-#@on_main_thread
+@on_main_thread
 def save(mtkview):
     mtkview.framebufferOnly = False
     texture = mtkview.currentDrawable().texture()
@@ -82,7 +85,9 @@ def save(mtkview):
             MTLTextureSwizzleAlpha
         )
     )'''
-    texture = texture.newTextureViewWithPixelFormat_textureType_levels_slices_(
+    func = texture.newTextureViewWithPixelFormat_textureType_levels_slices_
+    func.encoding = b'@64@0:8Q16Q24{_NSRange}32{_NSRange}48'
+    texture = func(
         80, texture.textureType(), NSRange(1,1), NSRange(0,1)
     )
     
@@ -92,7 +97,7 @@ def save(mtkview):
     selftruesize = width * height * 4
     p = malloc(selftruesize)
     
-    func = on_main_thread(texture.getBytes_bytesPerRow_fromRegion_mipmapLevel_)
+    func = texture.getBytes_bytesPerRow_fromRegion_mipmapLevel_
     func.encoding = b'v88@0:8^v16Q24{MTLRegion}32Q80'
     
     func(
@@ -120,3 +125,4 @@ def clear_cache():
     for key in (b'v88@0:8^v16Q24{MTLRegion}32Q80', b'@68@0:8Q16Q24{_NSRange=QQ}32{_NSRange=QQ}48{MTLTextureSwizzleChannels}64'):
         if key in objc_util._cached_parse_types_results:
             del objc_util._cached_parse_types_results[key]
+
