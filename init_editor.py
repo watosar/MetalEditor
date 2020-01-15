@@ -1,17 +1,29 @@
 import setupui
-from getfilepath import get_filepath
 import mtlviewer.initialize
-import pathlib
+from pathlib import Path
 import configparser
 import re
 import sys
+import editor
+from objc_util import *
 #import logger
+NSNotificationCenter = ObjCClass('NSNotificationCenter')
+defaNotiCenter = NSNotificationCenter.defaultCenter()
+
+def KeyboardNotificationReceiver_onWillChangeFrame_(_self, _cmd, _frame):
+    ...
+    
+
+KeyboardNotificationReceiver = create_objc_class(
+    'KeyboardNotificationReceiver',
+    methods = [KeyboardNotificationReceiver_onWillChangeFrame_]
+)
 
 
 class MetalEditor:
-    def __init__(self, root_view):
-        self.shader_path = get_filepath() #and 'sampleShader.metal.js'
-        mtl_view, controller_view = mtlviewer.initialize.ready(pathlib.Path(self.shader_path))
+    def __init__(self, shader_path):
+        self.shader_path = Path(shader_path) #and 'sampleShader.metal.js'
+        mtl_view, controller_view = mtlviewer.initialize.ready(self.shader_path)
         
         self.mtl_view = mtl_view
         self.controller_view = controller_view
@@ -25,8 +37,10 @@ class MetalEditor:
         controller_view.will_reload = self.will_reload
         controller_view.did_reload = self.did_reload
         
-        self.main_view = root.viewWithTag_(-2)
+        self.baseView = root.viewWithTag_(-2)
         controller_view.objc_instance.setTag_(-5)
+        
+        #swizzle editor didChange for incremental update
         
     def will_reload(self):
         self.tevd.willCloseTab()
@@ -37,7 +51,7 @@ class MetalEditor:
         self.set_config()
     
     def start(self):
-        self.main_view.addSubview_(self.mtl_view)
+        self.baseView.addSubview_(self.mtl_view.objc_instance)
         tevp = self.tev.superview()
         tevp.addSubview_(self.controller_view)
         
@@ -92,23 +106,36 @@ class MetalEditor:
             except ValueError as e:
                 sys.stderr.write('count value must be int')
 
-
+    def _editorDidChange_(self, textview_pointer):
+        ...
+        # call original
+    
+    def editor_did_change(self):
+        ...
 
 res = setupui.setup()
 if not res:
-    if setupui.root_view.viewWithTag_(-1):
-        setupui.root_view.viewWithTag_(-5).removeFromSuperview()
+    if setupui.rootView.viewWithTag_(-1):
+        setupui.rootView.viewWithTag_(-5).removeFromSuperview()
     else:
-        name = str(setupui.root_view.viewWithTag_(-2).subviews()[0].name())
+        name = str(setupui.rootView.viewWithTag_(-2).subviews()[0].name())
         sys.stderr.write(f'editor is already working for {name}\n')
     exit()
 root = res
     
 if __name__ == '__main__':
-    editor = MetalEditor(root)
-    editor.start()
+    file_path = editor.get_path()
+    mtl_editor = MetalEditor(file_path)
+    mtl_editor.start()
+    
+    #editor.mtl_view.objc_mtkview.preferredFramesPerSecond = 0
     import save_image
     def save():
         save_image.clear_cache()
         save_image.save(editor.mtl_view.objc_mtkview)
-        
+    
+    
+'''
+editor_tab. editorViewDidChange 
+のswizzleで変更を取得できる説
+'''
