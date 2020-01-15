@@ -48,7 +48,7 @@ def PyRenderer_mtkView_drawableSizeWillChange_(_self, _cmd, view_p, size):
     #print('size change', size)
     viewport_size[:] = resolution[:] = size.height, size.width
     #print(viewport_size)
-PyRenderer_mtkView_drawableSizeWillChange_.encoding = 'v:@:{CGSize}'
+PyRenderer_mtkView_drawableSizeWillChange_.encoding = 'v@:@{CGSize}'
 # special thanks for JonB 
 # https://forum.omz-software.com/topic/4968/how-can-i-use-return-in-my-objc-class/2
 
