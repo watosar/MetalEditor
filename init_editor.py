@@ -28,6 +28,7 @@ class MetalEditor:
         mtl_view, controller_view = mtlviewer.initialize.ready(self.shader_path)
 
         self.mtl_view = mtl_view
+        mtl_view.framebufferOnly = False
         self.controller_view = controller_view
         self.tev = setupui.rootView.viewWithTag_(setupui.EDITOR_VIEW_TAG)
 
@@ -197,7 +198,7 @@ if __name__ == '__main__':
     
     import save_image
     def save():
-        save_image.save(mts_editor.mtl_view.objc_mtkview)
+        return save_image.save(mts_editor.mtl_view.objc_mtkview)
 
 
 '''
