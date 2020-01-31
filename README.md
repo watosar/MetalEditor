@@ -1,5 +1,5 @@
 ## Overview
-This script prepares Pythonista for the handier coding of metal shaders.  
+This script customs Pythonista for the handier coding of metal shaders.  
 <img src="https://raw.githubusercontent.com/watosar/MetalEditor/images/1CE28F69-5F01-43C4-8F33-6AA880E2E345.jpeg" width="320px">
 
 ## Usage
@@ -11,5 +11,4 @@ This script prepares Pythonista for the handier coding of metal shaders.
 ## Tips
 - For syntax highlighting, I recommend naming shader files as `~~.js`.
 - This script often crashes when you run it for the first time.
-- The reload button is lazy. Please push him some times.
 - Read [here](https://developer.apple.com/documentation/metal/mtlprimitivetype?language=objc) for information of VertexType
