@@ -200,7 +200,3 @@ if __name__ == '__main__':
     def save():
         return save_image.save(mts_editor.mtl_view.objc_mtkview)
 
-
-'''
-shaderのエラー表示をeditor.annotate_lineで行う
-'''
